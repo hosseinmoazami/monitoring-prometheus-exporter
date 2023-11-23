@@ -1,12 +1,12 @@
 
-# Monitoring with Prometheus Exporter
-Prometheus exporter, consist of ansible playbook for install node exporter, redis exporter, ipmi exporter, ... on defined hosts.
+# Monitoring with Prometheus Exporters
+Prometheus exporters, consist of ansible playbook for install node exporter, redis exporter, ipmi exporter, ... on defined hosts.
 
 ---
 
 ## Running
 
-> change hosts ip in inverory.yml file, base on your infrastructure add your ips in defined hosts. 
+> change hosts ip in inventory.yml file, base on your infrastructure, add your IPs in defined hosts. 
 
 ### Node exporter
 
