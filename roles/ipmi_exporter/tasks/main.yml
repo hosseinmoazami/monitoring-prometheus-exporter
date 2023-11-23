@@ -6,12 +6,12 @@
     state: latest
     update_cache: true
 
-- name: check if ipmi exporter exist
+- name: Check if ipmi exporter exist
   stat:
     path: "{{ exporter_bin }}"
   register: __check_exporter_present
 
-- name: create monitoring user
+- name: Create monitoring user
   user:
     name: "{{ monitoring_user }}"
     append: true
@@ -19,20 +19,20 @@
     system: true
     create_home: false
 
-- name: create ipmi exporter config dir
+- name: Create ipmi exporter config dir
   file:
     path: "{{ exporter_dir_conf }}"
     state: directory
     owner: "{{ monitoring_user }}"
     group: "{{ monitoring_group }}"
 
-- name: if ipmi exporter exist get version
+- name: If ipmi exporter exist get version
   shell: "cat {{ exporter_dir_service }} | grep Version | sed s/'.*Version '//g"
   when: __check_exporter_present.stat.exists == true
   changed_when: false
   register: __get_exporter_version
 
-- name: download and unzip redis exporter if not exist
+- name: download and unzip ipmi exporter if not exist
   unarchive:
     src: "{{ exporter_url_file }}"
     dest: /tmp/
@@ -41,7 +41,7 @@
 
 - name: move the binary to the final destination
   copy:
-    src: "/tmp/ipmi_exporter-{{ exporter_version }}.linux-amd64/ipmi_exporter"
+    src: "{{ exporter_tmp_file }}"
     dest: "{{ exporter_bin }}"
     owner: "{{ monitoring_user }}"
     group: "{{ monitoring_group }}"
@@ -51,12 +51,12 @@
 
 - name: clean
   file:
-    path: /tmp/ipmi_exporter-{{ exporter_version }}.linux-amd64/
+    path: "{{ exporter_tmp_dir }}"
     state: absent
 
 - name: install service
   template:
-    src: ipmi_exporter.service.j2
+    src: exporter.service.j2
     dest: "{{ exporter_dir_service }}"
     owner: root
     group: root
