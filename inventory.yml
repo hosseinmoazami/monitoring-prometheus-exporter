@@ -6,7 +6,7 @@ data_center:
         10.10.10.10:
     noSql:
       hosts:
-        10.20.30.75:
+        10.10.10.75:
 
   vars:
     ansible_port: 22
