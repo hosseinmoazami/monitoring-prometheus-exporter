@@ -1,10 +1,10 @@
 ---
-- name: check if node exporter exist
+- name: Check if node exporter exist
   stat:
     path: "{{ exporter_bin }}"
   register: __check_exporter_present
 
-- name: create monitoring user
+- name: Create monitoring user
   user:
     name: "{{ monitoring_user }}"
     append: true
@@ -12,29 +12,29 @@
     system: true
     create_home: false
 
-- name: create node exporter config dir
+- name: Create node exporter config dir
   file:
     path: "{{ exporter_dir_conf }}"
     state: directory
     owner: "{{ monitoring_user }}"
     group: "{{ monitoring_group }}"
 
-- name: if node exporter exist get version
+- name: If node exporter exist get version
   shell: "cat {{ exporter_dir_service }} | grep Version | sed s/'.*Version '//g"
   when: __check_exporter_present.stat.exists == true
   changed_when: false
   register: __get_exporter_version
 
-- name: download and unzip node exporter if not exist
+- name: Download and unzip node exporter if not exist
   unarchive:
     src: "{{ exporter_url_file }}"
     dest: /tmp/
     remote_src: yes
     validate_certs: no
 
-- name: move the binary to the final destination
+- name: Move the binary to the final destination
   copy:
-    src: "/tmp/node_exporter-{{ exporter_version }}.linux-amd64/node_exporter"
+    src: "{{ exporter_tmp_file }}"
     dest: "{{ exporter_bin }}"
     owner: "{{ monitoring_user }}"
     group: "{{ monitoring_group }}"
@@ -42,14 +42,14 @@
     remote_src: yes
   when: __check_exporter_present.stat.exists == false or not __get_exporter_version.stdout == exporter_version
 
-- name: clean
+- name: Clean
   file:
-    path: /tmp/node_exporter-{{ exporter_version }}.linux-amd64/
+    path: "{{ exporter_tmp_dir }}"
     state: absent
 
-- name: install service
+- name: Install service
   template:
-    src: node_exporter.service.j2
+    src: exporter.service.j2
     dest: "{{ exporter_dir_service }}"
     owner: root
     group: root
@@ -57,7 +57,7 @@
   notify: reload_daemon_and_restart_exporter
 
 - meta: flush_handlers
-- name: service always started
+- name: Service always started
   systemd:
     name: "{{ service_name }}"
     state: started
