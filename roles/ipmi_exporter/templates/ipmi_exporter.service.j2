@@ -1,0 +1,16 @@
+[Unit]
+Description=Prometheus Ipmi Exporter Service {{ exporter_version }}
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Restart=always
+User={{ monitoring_user }}
+Group={{ monitoring_group }}
+ExecStart={{ exporter_bin }}
+ExecReload=/bin/kill -HUP $MAINPID
+TimeoutStopSec=30s
+SendSIGKILL=no
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,12 @@
+---
+exporter_version: "1.55.0"
+service_name: redis_exporter
+exporter_url_file: "https://github.com/oliver006/redis_exporter/releases/download/v{{ exporter_version }}/redis_exporter-v{{ exporter_version }}.linux-amd64.tar.gz"
+exporter_tmp_dir: "/tmp/redis_exporter-v{{ exporter_version }}.linux-amd64"
+exporter_tmp_file: "{{ exporter_tmp_dir }}/redis_exporter"
+exporter_bin: /usr/local/bin/{{ service_name }}
+exporter_dir_conf: /etc/{{ service_name }}
+exporter_dir_service: /etc/systemd/system/{{ service_name }}.service
+
+monitoring_user: monitoring
+monitoring_group: "{{ monitoring_user }}"

@@ -1,0 +1,7 @@
+---
+- name: Install redis exporter
+  hosts: noSql
+  gather_facts: true
+  become: true
+  roles:
+    - role: redis_exporter

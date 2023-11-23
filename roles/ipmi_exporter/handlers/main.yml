@@ -1,0 +1,7 @@
+---
+- name: reload_daemon_and_restart_exporter
+  systemd:
+    name: "{{ service_name }}"
+    state: restarted
+    daemon_reload: yes
+    enabled: yes

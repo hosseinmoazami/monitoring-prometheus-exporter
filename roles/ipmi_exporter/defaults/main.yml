@@ -1,0 +1,10 @@
+---
+exporter_version: "1.7.0"
+service_name: ipmi_exporter
+exporter_url_file: "https://github.com/prometheus-community/ipmi_exporter/releases/download/v{{ exporter_version }}/ipmi_exporter-{{ exporter_version }}.linux-amd64.tar.gz"
+exporter_bin: /usr/local/bin/{{ service_name }}
+exporter_dir_conf: /etc/{{ service_name }}
+exporter_dir_service: /etc/systemd/system/{{ service_name }}.service
+
+monitoring_user: monitoring
+monitoring_group: "{{ monitoring_user }}"
