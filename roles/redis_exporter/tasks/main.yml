@@ -1,10 +1,10 @@
 ---
-- name: check if redis exporter exist
+- name: Check if redis exporter exist
   stat:
     path: "{{ exporter_bin }}"
   register: __check_exporter_present
 
-- name: create monitoring user
+- name: Create monitoring user
   user:
     name: "{{ monitoring_user }}"
     append: true
@@ -12,27 +12,27 @@
     system: true
     create_home: false
 
-- name: create redis exporter config dir
+- name: Create redis exporter config dir
   file:
     path: "{{ exporter_dir_conf }}"
     state: directory
     owner: "{{ monitoring_user }}"
     group: "{{ monitoring_group }}"
 
-- name: if redis exporter exist get version
+- name: If redis exporter exist get version
   shell: "cat {{ exporter_dir_service }} | grep Version | sed s/'.*Version '//g"
   when: __check_exporter_present.stat.exists == true
   changed_when: false
   register: __get_exporter_version
 
-- name: download and unzip redis exporter if not exist
+- name: Download and unzip redis exporter if not exist
   unarchive:
     src: "{{ exporter_url_file }}"
     dest: /tmp/
     remote_src: yes
     validate_certs: no
 
-- name: move the binary to the final destination
+- name: Move the binary to the final destination
   copy:
     src: "{{ exporter_tmp_file }}"
     dest: "{{ exporter_bin }}"
@@ -42,12 +42,12 @@
     remote_src: yes
   when: __check_exporter_present.stat.exists == false or not __get_exporter_version.stdout == exporter_version
 
-- name: clean
+- name: Clean
   file:
     path: "{{ exporter_tmp_dir }}"
     state: absent
 
-- name: install service
+- name: Install service
   template:
     src: exporter.service.j2
     dest: "{{ exporter_dir_service }}"
@@ -57,7 +57,7 @@
   notify: reload_daemon_and_restart_exporter
 
 - meta: flush_handlers
-- name: service always started
+- name: Service always started
   systemd:
     name: "{{ service_name }}"
     state: started
